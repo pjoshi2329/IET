@@ -6,14 +6,17 @@ whatever you learn that week, you have to implement. */
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-
+const mongoose =require("mongoose");
 const app = express();
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-
+//mongodb+srv://IETsmp:<password>@cluster0.qfjwg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+mongoose.connect('mongodb+srv://IETsmp:smpweb@cluster0.qfjwg.mongodb.net/blogs',{useNewurlParser:true,useUnifiedTopology:true});
+let blog=[];
+const blog= require("./models/post");
 app.get("/",(req,res)=>{
   res.render("home");  
 });
@@ -45,6 +48,20 @@ app.post("/post", (req, res) =>{
 app.get("/compose", (req,res) =>{
   res.render('compose');
 });
+
+app.post("/compose", (req, res) =>{
+  console.log(req.body);
+  let title= req.body.title;
+  let post=req.body.content;
+  console.log(title);
+  console.log(post);
+  const post= new blog({
+    title:title,
+    content:content
+  })
+  post.save();
+   res.redirect("/");
+})
 
 app.listen(3000, function(){
   console.log('Server started at port 3000');
